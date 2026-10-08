@@ -1,0 +1,2 @@
+{"id":"mock-q1","original_query":"如何开启虚构的儿童锁？","atomic_requirements":["说明开启步骤"],"final_evidence":[{"evidence_id":"E1","text":"【虚构手册】打开设置菜单，点击儿童锁选项。"}],"gold_answerable":true}
+{"id":"mock-q2","original_query":"虚构手册有没有火箭发动机？","atomic_requirements":["说明是否有火箭发动机"],"final_evidence":[{"evidence_id":"E1","text":"【虚构手册】设置菜单里有儿童锁。"}],"gold_answerable":false}

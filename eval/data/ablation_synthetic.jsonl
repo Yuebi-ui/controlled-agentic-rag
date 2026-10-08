@@ -1,0 +1,6 @@
+{"id": "ab1", "variant": "baseline", "metrics": {"recall_at_10": 1.0, "ndcg_at_5": 0.6}}
+{"id": "ab2", "variant": "baseline", "metrics": {"recall_at_10": 1.0, "ndcg_at_5": 0.7}}
+{"id": "ab3", "variant": "baseline", "metrics": {"recall_at_10": 0.0, "ndcg_at_5": 0.0}}
+{"id": "ab1", "variant": "without_round2", "metrics": {"recall_at_10": 1.0, "ndcg_at_5": 0.6}}
+{"id": "ab2", "variant": "without_round2", "metrics": {"recall_at_10": 0.0, "ndcg_at_5": 0.0}}
+{"id": "ab3", "variant": "without_round2", "metrics": {"recall_at_10": 0.0, "ndcg_at_5": 0.0}}

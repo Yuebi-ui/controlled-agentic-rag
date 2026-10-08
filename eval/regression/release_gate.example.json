@@ -1,0 +1,13 @@
+{
+  "absolute": {
+    "router.false_sufficient_rate": {"max": 0.05},
+    "citation.citation_validity_rate": {"min": 1.0},
+    "round2.violations.unsafe_answer_without_sufficient_final_gate": {"max": 0},
+    "safety.safety_pass_rate": {"min": 0.99}
+  },
+  "delta": {
+    "retrieval.parent_recall_at_10": {"min": -0.02},
+    "reranker.after_ndcg_at_5": {"min": -0.01},
+    "benchmark.overall.p95_latency_ms": {"max": 250.0}
+  }
+}

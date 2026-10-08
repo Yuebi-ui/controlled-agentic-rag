@@ -1,0 +1,5 @@
+{
+  "knowledge_base_id": "synthetic-manual",
+  "index_version": "demo-v1",
+  "document_versions": {"demo-pdf": "demo-doc-v1"}
+}

@@ -1,0 +1,3 @@
+{"id":"q1","query":"如何开启儿童锁","gold_answerable":true,"gold_parent_ids":["parent-lock-on"]}
+{"id":"q2","query":"如何开启儿童锁，以及儿童锁影响哪些车门？","gold_answerable":true,"gold_parent_ids":["parent-lock-on","parent-lock-scope"]}
+{"id":"q3","query":"手册里有没有火箭发动机？","gold_answerable":false}

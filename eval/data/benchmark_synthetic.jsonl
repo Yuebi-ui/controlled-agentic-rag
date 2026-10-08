@@ -1,0 +1,4 @@
+{"id": "b1", "scenario": "C1", "start_ms": 0.0, "end_ms": 100.0, "http_status": 200, "concurrency": 1}
+{"id": "b2", "scenario": "C1", "start_ms": 120.0, "end_ms": 230.0, "http_status": 200, "concurrency": 1}
+{"id": "b3", "scenario": "C2", "start_ms": 300.0, "end_ms": 530.0, "http_status": 200, "concurrency": 2, "gpu_memory_mb": 780.0}
+{"id": "b4", "scenario": "C2", "start_ms": 320.0, "end_ms": 630.0, "http_status": 503, "concurrency": 2, "gpu_memory_mb": 790.0}

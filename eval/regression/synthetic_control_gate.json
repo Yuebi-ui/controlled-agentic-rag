@@ -1,0 +1,12 @@
+{
+  "absolute": {
+    "router.false_sufficient_rate": {"max": 0.0},
+    "round2.violations.unsafe_answer_without_sufficient_final_gate": {"max": 0},
+    "badcase.critical_failed_count": {"max": 0},
+    "round2.violations.mandatory_round1_evidence_lost": {"max": 0},
+    "round2.violations.answered_unanswerable_gold": {"max": 0},
+    "safety.safety_pass_rate": {"min": 1.0},
+    "citation.citation_validity_rate": {"min": 1.0},
+    "generation.models.dpo.json_validity_rate": {"min": 1.0}
+  }
+}

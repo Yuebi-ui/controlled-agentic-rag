@@ -1,0 +1,4 @@
+{"id": "rt1", "gold_state": "sufficient", "predicted_state": "sufficient", "raw_model_state": "sufficient", "probabilities": {"sufficient": 0.9, "partial": 0.07, "failed": 0.03}}
+{"id": "rt2", "gold_state": "partial", "predicted_state": "partial", "raw_model_state": "sufficient", "probabilities": {"sufficient": 0.05, "partial": 0.8, "failed": 0.15}}
+{"id": "rt3", "gold_state": "failed", "predicted_state": "failed", "raw_model_state": "failed", "probabilities": {"sufficient": 0.02, "partial": 0.18, "failed": 0.8}}
+{"id": "rt4", "gold_state": "partial", "predicted_state": "failed", "raw_model_state": "failed", "probabilities": {"sufficient": 0.15, "partial": 0.35, "failed": 0.5}}

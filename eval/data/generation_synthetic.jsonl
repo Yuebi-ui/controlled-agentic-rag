@@ -1,0 +1,9 @@
+{"id": "g1", "model_variant": "base", "gold_answerable": true, "schema_valid": false, "predicted_abstain": null}
+{"id": "g2", "model_variant": "base", "gold_answerable": false, "schema_valid": true, "predicted_abstain": false, "correctness": false, "faithfulness": false}
+{"id": "g3", "model_variant": "base", "gold_answerable": true, "schema_valid": true, "predicted_abstain": false, "correctness": true, "faithfulness": false}
+{"id": "g1", "model_variant": "sft", "gold_answerable": true, "schema_valid": true, "predicted_abstain": false, "correctness": true, "faithfulness": true}
+{"id": "g2", "model_variant": "sft", "gold_answerable": false, "schema_valid": true, "predicted_abstain": true}
+{"id": "g3", "model_variant": "sft", "gold_answerable": true, "schema_valid": true, "predicted_abstain": false, "correctness": true, "faithfulness": true}
+{"id": "g1", "model_variant": "dpo", "gold_answerable": true, "schema_valid": true, "predicted_abstain": false, "correctness": true, "faithfulness": true}
+{"id": "g2", "model_variant": "dpo", "gold_answerable": false, "schema_valid": true, "predicted_abstain": true}
+{"id": "g3", "model_variant": "dpo", "gold_answerable": true, "schema_valid": true, "predicted_abstain": false, "correctness": true, "faithfulness": true}

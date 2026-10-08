@@ -1,0 +1,2 @@
+{"id": "rr1", "positive_ids": ["p1"], "before": ["p2", "p1", "p3"], "after": ["p1", "p2", "p3"], "after_scores": {"p1": 0.9, "p2": 0.3, "p3": 0.2}}
+{"id": "rr2", "positive_ids": ["p4"], "before": ["p5", "p4"], "after": ["p4", "p5"], "after_scores": {"p4": 0.8, "p5": 0.1}}

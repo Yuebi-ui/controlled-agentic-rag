@@ -1,0 +1,55 @@
+# Local knowledge corpora, indexes, document exports
+/data/
+/processed_docs/
+/saved_index/
+*.db
+*.pkl
+*.pickle
+*.faiss
+*.index
+
+# Local / trained weights & router artifacts
+/models/
+/artifacts/
+/checkpoints/
+/outputs/
+/weights/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.gguf
+*.onnx
+*.bin
+adapter_model.*
+
+# Secrets and environment
+.env
+.env.*
+!.env.example
+!.env.dpo.example
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Runtime caches and local results
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+*.log
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.DS_Store
+.idea/
+.vscode/
+
+# Generated evaluation reports (recreate via eval/run_all.py)
+/eval/reports/*

@@ -1,0 +1,43 @@
+name: offline-contract-and-evaluation-tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install lightweight test dependencies
+        run: python -m pip install -e '.[test]'
+      - name: Unit and offline mock contract tests
+        run: python -m pytest -q
+      - name: Synthetic evaluation schemas and metric gate
+        run: python eval/run_all.py
+      - name: Synthetic Pipeline metadata trace smoke
+        run: >-
+          python scripts/collect_eval_traces.py --mode synthetic
+          --cases eval/data/pipeline_cases_synthetic.jsonl
+          --output outputs/eval_trace
+      - name: Synthetic deterministic guard probes
+        run: python eval/safety/run_control_probes.py --output outputs/safety_probes.jsonl
+      - name: Evaluate deterministic guard probe traces
+        run: >-
+          python -m controlled_rag.evaluation --suite safety
+          --input outputs/safety_probes.jsonl
+          --output outputs/safety_probes_report.json
+      - name: Store synthetic diagnostics for workflow inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: synthetic-eval-${{ matrix.python-version }}
+          path: |
+            eval/reports/synthetic-run/
+            outputs/eval_trace/
+            outputs/safety_probes_report.json
+          if-no-files-found: ignore
