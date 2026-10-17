@@ -38,9 +38,10 @@ class LabeledPipelineCase(BaseModel):
 
 
 def collect_case(pipeline: ControlledRAGPipeline, request: RequestContext,
-                 case: LabeledPipelineCase) -> tuple[PipelineResult, dict[str, dict]]:
+                 case: LabeledPipelineCase, *, observer: TraceRecorder | None = None
+                 ) -> tuple[PipelineResult, dict[str, dict]]:
     """Collect supported per-stage records without fabricating semantic labels."""
-    trace = TraceRecorder()
+    trace = observer if observer is not None else TraceRecorder()
     result = pipeline.run(case.query, request, observer=trace)
     ev = trace.events
     records: dict[str, dict] = {}

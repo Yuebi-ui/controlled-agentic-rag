@@ -2,7 +2,7 @@
 """Train and export the six-feature LR router from YOUR labeled data.
 
 Separate train and dev splits BEFORE constructing labels or hard negatives.
-The historical artifact is unavailable. This script does not recreate old metrics.
+The exported model must be independently calibrated and evaluated on held-out data.
 
 Input JSONL row:
   {"case_id":"train-1","label":"partial", "features": {
@@ -75,7 +75,7 @@ def train(train_file: Path, dev_file: Path, threshold: float, output: Path):
         "classes": list(classifier.classes_),
         "coefficients": coeff.tolist(), "intercepts": intercept.tolist(),
         "coverage_threshold": threshold,
-        "note": "Newly trained artifact. Not the missing historical router weights.",
+        "note": "Model trained from supplied train/dev files; test metrics require held-out evaluation.",
     }
     from controlled_rag.routing import LinearSoftmaxModel
     standalone = LinearSoftmaxModel(payload["classes"], payload["coefficients"], payload["intercepts"])
@@ -87,7 +87,7 @@ def train(train_file: Path, dev_file: Path, threshold: float, output: Path):
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Saved NEW router artifact to {output}; DEV accuracy={accuracy:.4f}, n={len(y_dev)}")
-    print("Do NOT report DEV accuracy as held-out test or reproduce historical metrics.")
+    print("Do NOT report DEV accuracy as held-out test.")
 
 
 def main():
@@ -95,7 +95,7 @@ def main():
     ap.add_argument("--train", type=Path, required=True)
     ap.add_argument("--dev", type=Path, required=True)
     ap.add_argument("--coverage-threshold", type=float, required=True,
-                    help="calibrated on training/dev only, NOT a historical threshold")
+                    help="calibrated on training/dev only")
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
     train(args.train, args.dev, args.coverage_threshold, args.out)

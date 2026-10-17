@@ -53,3 +53,40 @@ build/
 
 # Generated evaluation reports (recreate via eval/run_all.py)
 /eval/reports/*
+
+# Private benchmark corpora, raw predictions, telemetry and local study outputs
+/datasets/
+/benchmark_data/
+/benchmarks/data/
+/eval/datasets/
+/eval/private/
+/eval/real_runs/
+/eval/reports/
+/reports/raw/
+/verified_runs/
+/traces/
+/telemetry/
+/runs/
+/wandb/
+/mlruns/
+/tensorboard/
+*.tfevents.*
+
+# Block accidental publication of legacy locally generated reference archives
+/docs/experiments/reference_results/*
+
+# Private document corpora, auth stores and local locks
+*.pdf
+*.docx
+*.xlsx
+*.pptx
+*.parquet
+*.sqlite
+*.sqlite3
+*.p12
+*.pfx
+*.jks
+*.kdbx
+id_rsa
+id_ed25519
+.pip-audit-cache/

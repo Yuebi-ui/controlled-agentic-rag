@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
+import math
 from dataclasses import dataclass
 from typing import Protocol, Sequence
 
@@ -92,11 +93,16 @@ class RetrievalEngine:
     """Three optional branches at construction; at least 2 must be operational.
 
     Branch errors degrade from 3 to 2; no permission or integrity error can be
-    silently treated as a recoverable branch failure.
+    silently treated as a recoverable branch failure. The soft branch deadline
+    does not cancel blocking backend calls: adapters must configure their own
+    database/HTTP deadlines and be isolated/bounded at the serving layer.
     """
 
     def __init__(self, branches: dict[str, RankedRetriever], store: CanonicalStore,
-                 manifest: IndexManifest, top_k: int = 10, pool_cap: int = 20):
+                 manifest: IndexManifest, top_k: int = 10, pool_cap: int = 20,
+                 branch_timeout_s: float = 5.0):
+        if not math.isfinite(branch_timeout_s) or branch_timeout_s <= 0:
+            raise ValueError("branch_timeout_s must be finite and positive")
         if set(branches) != {"bm25", "dense", "clip"}:
             raise ValueError("expected exactly bm25/dense/clip branches")
         self.branches = branches
@@ -104,6 +110,7 @@ class RetrievalEngine:
         self.manifest = manifest
         self.top_k = top_k
         self.pool_cap = pool_cap
+        self.branch_timeout_s = branch_timeout_s
 
     def retrieve(self, query: str, request: RequestContext) -> RetrievalBatch:
         if (self.manifest.index_version != request.index_version or
@@ -112,10 +119,16 @@ class RetrievalEngine:
             raise IntegrityError("request not authorized for pinned index manifest")
         results: dict[str, Sequence[RetrievalHit]] = {}
         failed: list[str] = []
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        executor = ThreadPoolExecutor(max_workers=3)
+        unfinished = set()
+        try:
             futures = {name: executor.submit(retriever.retrieve, query, request, self.top_k)
                        for name, retriever in self.branches.items()}
+            ready, unfinished = wait(futures.values(), timeout=self.branch_timeout_s)
             for name, future in futures.items():
+                if future not in ready:
+                    failed.append(name)
+                    continue
                 try:
                     result = list(future.result())
                     for hit in result:
@@ -129,6 +142,11 @@ class RetrievalEngine:
                     raise IntegrityError("invalid retrieval branch hit schema") from exc
                 except Exception:
                     failed.append(name)
+        finally:
+            # A running Python thread cannot be forcibly terminated. Nonblocking
+            # shutdown avoids waiting for an overdue branch, while real I/O
+            # timeouts and concurrency quotas must be set by each adapter.
+            executor.shutdown(wait=not unfinished, cancel_futures=bool(unfinished))
         if len(results) < 2:
             raise IntegrityError("less than two retrieval branches available")
 
