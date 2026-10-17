@@ -103,3 +103,49 @@ def test_backend_error_does_not_turn_into_answer():
     result = pipeline.run("如何开启儿童锁", demo_request())
     assert result.final_status == "failed"
     assert result.citations == []
+
+
+def test_branch_deadline_degrades_one_stalled_retriever():
+    import time
+    from controlled_rag.demo import build_demo_pipeline
+
+    class SlowRetriever:
+        def retrieve(self, *args, **kwargs):
+            time.sleep(0.12)
+            return []
+
+    pipeline = build_demo_pipeline()
+    pipeline.retrieval.branch_timeout_s = 0.025
+    pipeline.retrieval.branches["clip"] = SlowRetriever()
+    began = time.monotonic()
+    result = pipeline.run("如何开启儿童锁", demo_request())
+    assert (time.monotonic() - began) < 0.11
+    assert result.final_status == "answered"
+    assert "clip" in result.degraded_branches
+
+
+def test_branch_deadline_two_stalled_branches_fail_closed():
+    import time
+    from controlled_rag.demo import build_demo_pipeline
+
+    class SlowRetriever:
+        def retrieve(self, *args, **kwargs):
+            time.sleep(0.10)
+            return []
+
+    pipeline = build_demo_pipeline()
+    pipeline.retrieval.branch_timeout_s = 0.025
+    pipeline.retrieval.branches["bm25"] = SlowRetriever()
+    pipeline.retrieval.branches["clip"] = SlowRetriever()
+    result = pipeline.run("如何开启儿童锁", demo_request())
+    assert result.final_status == "failed"
+    assert result.reason_code == "INTEGRITY_OR_CONTROL_FAILURE"
+
+
+def test_invalid_branch_deadline_rejected():
+    from controlled_rag.demo import build_demo_pipeline
+    from controlled_rag.retrieval import RetrievalEngine
+    demo = build_demo_pipeline().retrieval
+    for value in (0, -1, float("nan"), float("inf")):
+        with pytest.raises(ValueError):
+            RetrievalEngine(demo.branches, demo.store, demo.manifest, branch_timeout_s=value)

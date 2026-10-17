@@ -1,6 +1,6 @@
 """Atomic requirement features and reproducible multinomial LR inference.
 
-The historical LR weights and coverage threshold were not included in the upload.
+Trained LR weights and the calibrated coverage threshold are externally supplied.
 The production router requires an explicitly trained artifact; no fake weights.
 """
 

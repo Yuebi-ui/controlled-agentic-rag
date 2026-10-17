@@ -20,9 +20,10 @@ from .retrieval import evaluate_reranker, evaluate_retrieval
 from .round2 import evaluate_round2
 from .router import evaluate_router
 from .safety import evaluate_safety
+from .workflow import evaluate_workflow
 from .schemas import (AblationRecord, BadCaseRecord, BenchmarkRecord, CitationRecord, GenerationRecord,
                       RetrievalRecord, RerankerRecord, Round2Record, RouterRecord,
-                      SafetyRecord)
+                      SafetyRecord, WorkflowRecord)
 
 SUITES: dict[str, tuple[Type | None, object]] = {
     'retrieval': (RetrievalRecord, evaluate_retrieval),
@@ -34,6 +35,7 @@ SUITES: dict[str, tuple[Type | None, object]] = {
     'safety': (SafetyRecord, evaluate_safety),
     'benchmark': (BenchmarkRecord, evaluate_benchmark),
     'ablation': (AblationRecord, evaluate_ablation),
+    'workflow': (WorkflowRecord, evaluate_workflow),
     'badcase': (BadCaseRecord, evaluate_badcases),
     'split-audit': (None, audit_splits),
 }

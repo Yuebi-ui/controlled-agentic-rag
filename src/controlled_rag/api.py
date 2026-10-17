@@ -1,8 +1,8 @@
 """Opt-in synthetic FastAPI example. REAL mode must be explicitly wired later."""
 
-from __future__ import annotations
 
 import os
+import hmac
 from typing import Callable
 
 from pydantic import BaseModel, Field
@@ -15,12 +15,25 @@ class ChatRequest(BaseModel):
     query: str = Field(min_length=1, max_length=4000)
 
 
-def create_app(factory: Callable = build_demo_pipeline):
-    from fastapi import FastAPI, HTTPException
+def _demo_public_payload(payload: dict) -> dict:
+    """Only intentionally fictional demo:// URIs are safe in the demo response."""
+    for citation in payload.get("citations", []):
+        for field in ("source_uri", "image_uri"):
+            value = citation.get(field)
+            if value and not value.startswith("demo://"):
+                citation[field] = None
+    return payload
+
+
+def create_app(factory: Callable = build_demo_pipeline, *, demo_api_key: str | None = None):
+    from fastapi import FastAPI, HTTPException, Request
     from starlette.concurrency import run_in_threadpool
 
     app = FastAPI(title="Controlled Agentic RAG — synthetic demo", version="0.1.0")
     pipeline = factory()
+    configured_key = demo_api_key if demo_api_key is not None else os.getenv("RAG_DEMO_API_KEY")
+    if configured_key is not None and (not configured_key.strip() or configured_key == "EMPTY"):
+        raise ValueError("RAG_DEMO_API_KEY must not be blank or a placeholder")
     admission = AdmissionController()  # demo process only; tune and benchmark for production
 
     @app.get("/health")
@@ -28,7 +41,19 @@ def create_app(factory: Callable = build_demo_pipeline):
         return {"status": "ok", "mode": "synthetic-demo", "production_ready": False}
 
     @app.post("/chat")
-    async def chat(request: ChatRequest):
+    async def chat(request: ChatRequest, http_request: Request):
+        # No authentication by default ONLY for localhost/testclient. For any
+        # non-local caller an explicit demo token is mandatory. This is not a
+        # multi-tenant production authentication scheme.
+        remote = http_request.client.host if http_request.client else None
+        if configured_key is None:
+            if remote not in {"127.0.0.1", "::1", "testclient"}:
+                raise HTTPException(status_code=403, detail="demo is localhost-only without an API key")
+        else:
+            expected = f"Bearer {configured_key}"
+            provided = http_request.headers.get("authorization", "")
+            if not hmac.compare_digest(provided, expected):
+                raise HTTPException(status_code=401, detail="invalid demo token")
         # The HTTP client must not provide its own authorization / version context.
         try:
             async with admission.slot():
@@ -36,8 +61,8 @@ def create_app(factory: Callable = build_demo_pipeline):
         except BusyError:
             raise HTTPException(status_code=429, detail="demo server is busy")
         if result.final_status == "failed":
-            raise HTTPException(status_code=503, detail=result.model_dump())
-        return result.model_dump()
+            raise HTTPException(status_code=503, detail={"code": "demo_pipeline_failed"})
+        return _demo_public_payload(result.model_dump())
 
     return app
 

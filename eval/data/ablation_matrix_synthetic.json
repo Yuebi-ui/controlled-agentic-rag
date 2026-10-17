@@ -1,0 +1,7 @@
+{
+  "baseline": "baseline",
+  "variants": [
+    {"name": "baseline", "settings": {"max_retrieval_rounds": 2}},
+    {"name": "without_round2", "settings": {"max_retrieval_rounds": 1}}
+  ]
+}

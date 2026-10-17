@@ -21,11 +21,12 @@ class PipelineConfig:
     round1_retain: int = 5
     round2_pool_cap: int = 20
     max_retrieval_rounds: int = 2
-    max_atomic_requirements: int = 8  # configurable serving guardrail, NOT historical param
+    max_atomic_requirements: int = 8  # configurable serving guardrail, not a measured optimum
 
     def __post_init__(self):
-        if self.max_retrieval_rounds != 2:
-            raise ValueError("MAX_RETRIEVAL_ROUNDS is structurally fixed at 2")
+        # One round is an explicit, fail-closed ablation; production defaults to two.
+        if self.max_retrieval_rounds not in (1, 2):
+            raise ValueError("max_retrieval_rounds must be 1 or 2")
         if min(self.rerank_top_k, self.round1_retain, self.round2_pool_cap) < 1:
             raise ValueError("positive RAG candidate caps required")
         if self.round2_pool_cap < self.rerank_top_k:
@@ -169,7 +170,7 @@ class ControlledRAGPipeline:
             ranked = ranked1
             decision = decision1
 
-            if decision.state != "sufficient":
+            if decision.state != "sufficient" and self.config.max_retrieval_rounds == 2:
                 if decision.state == "partial" and decision.missing_requirements:
                     rewritten = self.rewriter.rewrite_missing(query, decision.missing_requirements)
                 else:

@@ -27,3 +27,7 @@
 3. 特别区分**结构化合法性**、**引用来源合法性**、**引用事实支持**；它们是不同目标，不能用一个近似替代另一个。
 4. 发布任何分数时保存输入数据 hash、模型 checkpoint/version、索引 version、prompt/schema version、评测脚本 commit、关键运行环境以及原始 report；人工审核的语义指标应有标注协议和可审核样本。
 5. 完成真实测试后，才可使用真实 Release Gate 阈值；`synthetic_control_gate.json` 只保护离线示例的控制行为。
+
+## Agent Workflow / Ablation Gold Labels
+
+`gold_round1_state` 只能根据实际首轮证据与固定 Atomic Requirements 标注，不应由线上 Router 的预测复制得到。`expected_round2` 是标准两轮策略下的独立触发 Gold；单轮消融即使不执行二轮，也保留相同触发 Gold 用于衡量遗漏率。若消融改变 Round1 的候选或 Evidence 集，必须重新审查与之关联的 Route1 Gold，不能无条件复用另一个候选池的证据充分性标签。`gold_answerable` 是冻结知识域层面的可回答性；不能拿它替代模型输出的事实正确性标注。

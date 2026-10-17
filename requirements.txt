@@ -1,6 +1,6 @@
-# Minimal dependencies for the new core and offline tests.
-# Full legacy heavy dependencies are archived under legacy/requirements.txt.
+# Minimal dependencies for core contracts and offline evaluation.
+# Optional retrieval, serving and training dependencies live in pyproject.toml.
 pydantic>=2.10,<3
-pytest>=8.0
-fastapi>=0.115
-httpx>=0.27
+pytest>=8.0,<10
+fastapi>=0.115,<1
+httpx>=0.27,<1

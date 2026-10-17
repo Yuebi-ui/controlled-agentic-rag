@@ -1,7 +1,5 @@
 # Qwen3-8B DPO-first AnswerModel Adapter
 
-**Status:** interface and offline tests implemented; DPO checkpoint is **missing** and real vLLM inference is **not verified**.
-The original free-text `RAGPipeline` has **not yet been migrated** to the new Controlled Agentic RAG data contract. This module is the target architecture's AnswerModel entrypoint, not a claim of end-to-end deployment.
 
 ## Why DPO is the target
 
@@ -60,7 +58,6 @@ result = Qwen3DPOAdapter().generate(request)
 # -> StructuredAnswer; NOT user-facing text until Citation Guard and Renderer pass.
 ```
 
-For the new Pipeline, set `generator=PipelineQwen3AnswerModel()` (import from `controlled_rag.adapters.qwen3_dpo`) when constructing `ControlledRAGPipeline`, **only after supplying real retrievers, router and authorized canonical stores**. The bridge maps request-sealed Evidence IDs into `GenerationRequest`, translates invalid model output into `ModelOutputError`, and the Pipeline rechecks Citation Guard independently. The `demo.py` entrypoint intentionally keeps its synthetic `DemoGenerator` and does not load DPO weights.
 
 Only `answer_blocks[].text` is the model-authored factual answer. The model is forbidden to invent filenames, page numbers, provenance, permissions, or index/document versions. The adapter rejects invalid JSON, contradictory abstention states, duplicate/fabricated IDs, interrupted output and serving errors; it never retries or changes models automatically. The production Citation Guard **still** needs to validate request-scoped provenance, allowed KB/index/document versions, permissions and metadata, which this model adapter does **not** implement.
 
@@ -70,4 +67,3 @@ Only `answer_blocks[].text` is the model-authored factual answer. The model is f
 python -m pytest -q tests/test_qwen3_dpo_adapter.py
 ```
 
-This runs without GPU, model weights or a network connection. Tests use a fake OpenAI-compatible client; they cannot establish DPO model performance.

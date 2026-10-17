@@ -208,3 +208,37 @@ class BadCaseRecord(StrictRecord):
         for field in ('forbidden_citation_ids', 'observed_citation_ids'):
             _distinct(getattr(self, field), field)
         return self
+
+
+class WorkflowRecord(StrictRecord):
+    """One question's trace-derived decisions plus independently specified gold labels.
+
+    `gold_answerable` is corpus-level answerability, not an automatic judgment of
+    whether the variant retrieved enough evidence. Route1 labels should be reviewed
+    against that variant's actual first-round evidence in a real study.
+    """
+    gold_answerable: bool
+    gold_round1_state: Route
+    predicted_round1_state: Route | None = None
+    expected_round2: bool
+    actual_round2: bool
+    retrieval_rounds: int = Field(ge=0, le=2)
+    final_gate_state: Route | None = None
+    final_status: Status
+    reason_code: str = Field(min_length=1)
+    sealed_final_present: bool
+    mandatory_round1_keys: list[str] = Field(default_factory=list)
+    merged_evidence_keys: list[str] | None = None
+    elapsed_ms: float = Field(ge=0)
+
+    @model_validator(mode='after')
+    def validate_trace(self):
+        _distinct(self.mandatory_round1_keys, 'mandatory_round1_keys')
+        if self.merged_evidence_keys is not None:
+            _distinct(self.merged_evidence_keys, 'merged_evidence_keys')
+        # Do not silently accept an internally contradictory trace as evidence.
+        if self.actual_round2 != (self.retrieval_rounds == 2):
+            raise ValueError('actual_round2 does not match retrieval_rounds')
+        if self.gold_round1_state == 'sufficient' and self.expected_round2:
+            raise ValueError('sufficient gold round1 evidence should not trigger Round2')
+        return self

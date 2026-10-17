@@ -1,0 +1,43 @@
+{
+  "data_origin": "maintainer_declared_real_run_public_origin_not_independently_verified",
+  "disclosure": "🔴 Maintainer declares real-run records; hardware sampling, independent annotation and external audit are not demonstrated.",
+  "evidence_manifest": "published_runs/RUN-EXAMPLE-2026-001/manifest.json",
+  "gpu_execution_observed": false,
+  "human_annotation_collected": false,
+  "metrics": [
+    {
+      "baseline": 0.67,
+      "candidate": 0.8166666666666667,
+      "name": "grounded_success_per_input",
+      "paired_n": 300,
+      "source_path": "published_runs/RUN-EXAMPLE-2026-001/workflow_anonymized.jsonl"
+    },
+    {
+      "baseline": 0.9,
+      "candidate": 0.9633333333333334,
+      "name": "parent_recall_at_10",
+      "paired_n": 300,
+      "source_path": "published_runs/RUN-EXAMPLE-2026-001/retrieval_anonymized.jsonl"
+    },
+    {
+      "baseline": 0.7454860855104165,
+      "candidate": 0.9332671273014953,
+      "name": "router_macro_f1",
+      "paired_n": 300,
+      "source_path": "published_runs/RUN-EXAMPLE-2026-001/router_anonymized.jsonl"
+    },
+    {
+      "baseline": 0.8006537470344058,
+      "candidate": 0.8505494849866563,
+      "name": "reranker_ndcg_at_5",
+      "paired_n": 300,
+      "source_path": "published_runs/RUN-EXAMPLE-2026-001/retrieval_anonymized.jsonl"
+    }
+  ],
+  "model_execution_observed": false,
+  "provenance_independently_verified": false,
+  "run_id": "RUN-EXAMPLE-2026-001",
+  "schema_version": 3,
+  "source_type_claimant": "project_maintainer",
+  "status": "real_audited"
+}
